@@ -30,6 +30,9 @@ const DATA_URLS = [
   './data/p6-engineering.js',
   './data/p6-education.js',
   './data/p6-economy.js',
+  './data/p7-environment.js',
+  './data/p7-biomedical.js',
+  './data/p7-strategy.js',
 ];
 
 // JS 功能模块
