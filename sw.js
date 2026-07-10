@@ -33,6 +33,8 @@ const DATA_URLS = [
   './data/p7-environment.js',
   './data/p7-biomedical.js',
   './data/p7-strategy.js',
+  './data/p7-history.js',
+  './data/p7-fun.js',
 ];
 
 // JS 功能模块
@@ -66,6 +68,7 @@ const JS_URLS = [
   './js/p5-quiz.js',
   './js/p5-relations.js',
   './js/p5-trends.js',
+  './js/role-viewer.js',
 ];
 
 // 图标资源
