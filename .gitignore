@@ -34,3 +34,6 @@ build/
 # Python cache
 __pycache__/
 *.pyc
+
+# Local organized material archive (copy of project files, not source)
+project-materials/

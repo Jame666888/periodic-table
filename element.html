@@ -53,7 +53,7 @@ if ('serviceWorker' in navigator) {
 <!-- 主体 -->
 <div class="detail-layout">
 
-    <!-- ===== 侧边栏 ===== -->
+    <!-- ===== 侧边栏（导航栏） ===== -->
   <aside class="detail-sidebar">
     <!-- 返回按钮 -->
     <a href="index.html" class="back-btn" data-i18n="detail.back">← 返回周期表</a>
@@ -73,133 +73,149 @@ if ('serviceWorker' in navigator) {
       <a id="btnNext" href="#" class="nav-btn" onclick="var z=parseInt(new URLSearchParams(location.search).get('z')||'1',10);if(z&lt;118)location.href='element.html?z='+(z+1);return false;">下一个 →</a>
     </div>
 
-    <!-- ═══ 分组1：核心数据（默认展开） ═══ -->
-    <div class="sidebar-group" data-group="core">
-      <div class="sidebar-group-header" onclick="toggleSidebarGroup('core')">
-        <span>📊 核心数据</span><span class="sg-arrow">▾</span>
+    <!-- 角色视图切换器由 role-viewer.js 自动插入到这里 -->
+
+    <!-- 维度导航目录 -->
+    <nav class="dimension-nav" id="dimensionNav">
+      <div class="dimension-nav-title">📑 维度导航</div>
+      <ul id="dimensionNavList" class="dimension-nav-list"></ul>
+    </nav>
+
+    <!-- ════════════════════════════════════════════════════
+         旧版数据源容器（隐藏）：保留所有原 ID，供现有 JS 继续渲染
+         页面初始化后会通过 organizeDimensionLayout() 搬运到右侧 section
+         ════════════════════════════════════════════════════ -->
+    <div id="legacySidebarSource" style="display:none">
+
+      <!-- 分组1：核心数据 -->
+      <div class="sidebar-group" data-group="core">
+        <div class="sidebar-group-body">
+          <div class="props-card props-inline"><div class="props-card-title">基本属性</div><div id="propsBody"></div></div>
+          <div class="props-card props-inline"><div class="props-card-title">物理性质</div><div id="physPropsBody"></div></div>
+          <div class="props-card props-inline"><div class="props-card-title">原子与晶体</div><div id="crystalPropsBody"></div>
+            <button class="view-3d-btn" id="btnView3D" onclick="toggle3DView()" style="margin-top:8px;width:100%;padding:6px 0;border-radius:6px;border:1.5px solid var(--accent-blue);background:transparent;color:var(--accent-blue);cursor:pointer;font-size:13px;font-weight:600">🌐 查看3D晶体结构</button></div>
+          <div class="props-card props-inline"><div class="props-card-title">材料与工程</div><div id="materialPropsBody"></div></div>
+          <div class="props-card props-inline"><div class="props-card-title">热力学数据 (298 K)</div><div id="thermoPropsBody"></div></div>
+          <div class="props-card props-inline"><div class="props-card-title">电化学数据</div><div id="electroPropsBody"></div></div>
+        </div>
       </div>
-      <div class="sidebar-group-body">
 
-    <div class="props-card props-inline"><div class="props-card-title">基本属性</div><div id="propsBody"></div></div>
-    <div class="props-card props-inline"><div class="props-card-title">物理性质</div><div id="physPropsBody"></div></div>
-    <div class="props-card props-inline"><div class="props-card-title">原子与晶体</div><div id="crystalPropsBody"></div>
-      <button class="view-3d-btn" id="btnView3D" onclick="toggle3DView()" style="margin-top:8px;width:100%;padding:6px 0;border-radius:6px;border:1.5px solid var(--accent-blue);background:transparent;color:var(--accent-blue);cursor:pointer;font-size:13px;font-weight:600">🌐 查看3D晶体结构</button></div>
-    <div class="props-card props-inline"><div class="props-card-title">材料与工程</div><div id="materialPropsBody"></div></div>
-    <div class="props-card props-inline"><div class="props-card-title">热力学数据 (298 K)</div><div id="thermoPropsBody"></div></div>
-    <div class="props-card props-inline"><div class="props-card-title">电化学数据</div><div id="electroPropsBody"></div></div>
-
+      <!-- 分组2：安全与工业 -->
+      <div class="sidebar-group" data-group="safety">
+        <div class="sidebar-group-body">
+          <div class="props-card props-inline" id="ghsCard"><div class="props-card-title">⚠️ GHS 安全分类</div><div id="ghsBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
+          <div class="props-card props-inline" id="toxicCard"><div class="props-card-title">🧪 毒理与职业暴露</div><div id="toxicBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
+          <div class="props-card props-inline" id="industrialCard"><div class="props-card-title">🏭 工业生产数据</div><div id="industrialBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
+          <div class="props-card props-inline" id="emergencyCard"><div class="props-card-title">🚑 应急处置</div><div id="emergencyBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
+        </div>
       </div>
-    </div>
 
-    <!-- ═══ 分组2：安全与工业（默认折叠） ═══ -->
-    <div class="sidebar-group collapsed" data-group="safety">
-      <div class="sidebar-group-header" onclick="toggleSidebarGroup('safety')">
-        <span>⚠️ 安全与工业</span><span class="sg-arrow">▸</span>
+      <!-- 分组3：科研数据 -->
+      <div class="sidebar-group" data-group="research">
+        <div class="sidebar-group-body">
+          <div class="props-card props-inline" id="spectralCard"><div class="props-card-title">🔬 光谱数据</div><div id="spectralBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
+          <div class="props-card props-inline" id="advCrystalCard"><div class="props-card-title">💎 先进晶体学</div><div id="advCrystalBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
+          <div class="props-card props-inline" id="researchCard"><div class="props-card-title">🔬 研究前沿</div><div id="researchBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
+          <div class="props-card props-inline" id="orbitalCard"><div class="props-card-title">🌀 电子轨道 3D</div>
+            <div style="padding:12px 14px;text-align:center">
+              <button id="orbitalOpenBtn" style="padding:10px 22px;border-radius:10px;background:linear-gradient(135deg,#a371f7,#58a6ff);color:#fff;border:none;cursor:pointer;font-weight:600;font-size:13px;box-shadow:0 4px 14px rgba(163,113,247,0.35);transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(163,113,247,0.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(163,113,247,0.35)'">🔮 查看 3D 轨道</button>
+              <p style="margin-top:10px;font-size:11.5px;color:var(--text-muted)">可视化 s / p / d / f 轨道形状 · 支持鼠标拖拽旋转</p></div></div>
+          <div class="props-card props-inline" id="trendCard" style="display:none"><div class="props-card-title">📈 属性趋势图</div><div id="trendBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
+          <div class="props-card props-inline" id="abundanceCard" style="display:none"><div class="props-card-title">🌍 元素丰度对比</div><div id="abundanceBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
+          <div class="props-card props-inline" id="relationsCard" style="display:none"><div class="props-card-title">🔗 元素关系图</div><div id="relationsBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
+          <div class="props-card props-inline" id="compoundsCard" style="display:none"><div class="props-card-title">🧪 重要化合物与衍生物</div><div id="compoundsBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
+        </div>
       </div>
-      <div class="sidebar-group-body" style="display:none">
 
-    <div class="props-card props-inline" id="ghsCard"><div class="props-card-title">⚠️ GHS 安全分类</div><div id="ghsBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
-    <div class="props-card props-inline" id="toxicCard"><div class="props-card-title">🧪 毒理与职业暴露</div><div id="toxicBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
-    <div class="props-card props-inline" id="industrialCard"><div class="props-card-title">🏭 工业生产数据</div><div id="industrialBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
-    <div class="props-card props-inline" id="emergencyCard"><div class="props-card-title">🚑 应急处置</div><div id="emergencyBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
-
+      <!-- 分组4：同位素 & 标识符 -->
+      <div class="sidebar-group" data-group="isotope">
+        <div class="sidebar-group-body">
+          <div class="props-card props-inline"><div class="props-card-title">同位素</div><div id="isotopeSummary"></div></div>
+          <div class="props-card props-inline"><div class="props-card-title">标识符与丰度</div><div id="idPropsBody"></div></div>
+          <div class="electron-vis">
+            <div class="electron-vis-title">核外电子排布</div>
+            <div id="electronShells" class="electron-shells"></div>
+          </div>
+          <div class="props-card"><div class="props-card-title">数据来源引用</div><div id="sourcesBody" style="font-size:10px;color:var(--text-muted);padding:8px 14px;line-height:1.6"></div></div>
+        </div>
       </div>
-    </div>
 
-    <!-- ═══ 分组3：科研数据（默认折叠） ═══ -->
-    <div class="sidebar-group collapsed" data-group="research">
-      <div class="sidebar-group-header" onclick="toggleSidebarGroup('research')">
-        <span>🔬 科研数据</span><span class="sg-arrow">▸</span>
-      </div>
-      <div class="sidebar-group-body" style="display:none">
-
-    <div class="props-card props-inline" id="spectralCard"><div class="props-card-title">🔬 光谱数据</div><div id="spectralBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
-    <div class="props-card props-inline" id="advCrystalCard"><div class="props-card-title">💎 先进晶体学</div><div id="advCrystalBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
-    <div class="props-card props-inline" id="researchCard"><div class="props-card-title">🔬 研究前沿</div><div id="researchBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
-    <div class="props-card props-inline" id="orbitalCard"><div class="props-card-title">🌀 电子轨道 3D</div>
-      <div style="padding:12px 14px;text-align:center">
-        <button id="orbitalOpenBtn" style="padding:10px 22px;border-radius:10px;background:linear-gradient(135deg,#a371f7,#58a6ff);color:#fff;border:none;cursor:pointer;font-weight:600;font-size:13px;box-shadow:0 4px 14px rgba(163,113,247,0.35);transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(163,113,247,0.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(163,113,247,0.35)'">🔮 查看 3D 轨道</button>
-        <p style="margin-top:10px;font-size:11.5px;color:var(--text-muted)">可视化 s / p / d / f 轨道形状 · 支持鼠标拖拽旋转</p></div></div>
-    <div class="props-card props-inline" id="trendCard" style="display:none"><div class="props-card-title">📈 属性趋势图</div><div id="trendBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
-    <div class="props-card props-inline" id="abundanceCard" style="display:none"><div class="props-card-title">🌍 元素丰度对比</div><div id="abundanceBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
-    <div class="props-card props-inline" id="relationsCard" style="display:none"><div class="props-card-title">🔗 元素关系图</div><div id="relationsBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
-    <div class="props-card props-inline" id="compoundsCard" style="display:none"><div class="props-card-title">🧪 重要化合物与衍生物</div><div id="compoundsBody"><p style="color:var(--text-muted)">加载中…</p></div></div>
-
-      </div>
-    </div>
-
-    <!-- ═══ 分组4：同位素 & 标识符（默认展开） ═══ -->
-    <div class="sidebar-group" data-group="isotope">
-      <div class="sidebar-group-header" onclick="toggleSidebarGroup('isotope')">
-        <span>⚛️ 同位素 &amp; 标识符</span><span class="sg-arrow">▾</span>
-      </div>
-      <div class="sidebar-group-body">
-
-    <div class="props-card props-inline"><div class="props-card-title">同位素</div><div id="isotopeSummary"></div></div>
-    <div class="props-card props-inline"><div class="props-card-title">标识符与丰度</div><div id="idPropsBody"></div></div>
-
-    <!-- 电子壳层可视化 -->
-    <div class="electron-vis">
-      <div class="electron-vis-title">核外电子排布</div>
-      <div id="electronShells" class="electron-shells"></div>
-    </div>
-
-    <!-- 数据来源 -->
-    <div class="props-card"><div class="props-card-title">数据来源引用</div><div id="sourcesBody" style="font-size:10px;color:var(--text-muted);padding:8px 14px;line-height:1.6"></div></div>
-
-      </div>
-    </div>
-
-    <!-- 目录 -->
-    <div class="toc-card"><div class="toc-title">内容目录</div><ul id="tocList" class="toc-list"></ul></div>
+    </div><!-- /legacySidebarSource -->
   </aside>
 
-  <!-- ===== 主内容 ===== -->
-  <main class="detail-main">
+  <!-- ===== 主内容（按维度分 Section） ===== -->
+  <main class="detail-main" id="detailMain">
 
     <!-- 搜索框 -->
-    <div class="search-bar">
-      <div class="search-bar-title">🔍 搜索</div>
-      <div class="search-row">
-        <input id="siteSearchInput" class="search-input" type="text" placeholder="在本站搜索元素（名称/符号/序号）…" autocomplete="off"/>
-        <button class="search-btn search-btn-site" onclick="doSiteSearch()">站内搜索</button>
-        <button class="search-btn search-btn-web" onclick="doWebSearch()">🌐 站外搜索</button>
+    <section id="section-search" class="dimension-section">
+      <div class="search-bar">
+        <div class="search-bar-title">🔍 搜索</div>
+        <div class="search-row">
+          <input id="siteSearchInput" class="search-input" type="text" placeholder="在本站搜索元素（名称/符号/序号）…" autocomplete="off"/>
+          <button class="search-btn search-btn-site" onclick="doSiteSearch()">站内搜索</button>
+          <button class="search-btn search-btn-web" onclick="doWebSearch()">🌐 站外搜索</button>
+        </div>
+        <div class="search-shortcuts" id="searchShortcuts">
+          <!-- 动态生成快速跳转链接 -->
+        </div>
       </div>
-      <div class="search-shortcuts" id="searchShortcuts">
-        <!-- 动态生成快速跳转链接 -->
-      </div>
-    </div>
+    </section>
 
-    <!-- P3 安全数据已在侧边栏安全与工业分组中展示 -->
+    <!-- 3D 晶体结构（默认隐藏，由按钮触发） -->
+    <section id="section-crystal3d" class="dimension-section hidden" data-dimension="crystal3d">
+      <div id="crystal3Dbody" class="content-card">
+        <h3>💎 3D 晶体结构</h3>
+        <div id="crystal3DContainer" style="width:100%;height:400px;background:#0a0a1a;border-radius:8px;position:relative;overflow:hidden">
+          <canvas id="crystalCanvas" style="width:100%;height:100%"></canvas>
+          <div id="crystalInfo" style="position:absolute;top:8px;left:12px;font-size:12px;color:rgba(255,255,255,.7);background:rgba(0,0,0,.5);padding:4px 10px;border-radius:6px"></div>
+          <div id="crystalLlegend" style="position:absolute;bottom:8px;left:12px;font-size:11px;color:rgba(255,255,255,.6)"></div>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="resetCrystalView()" style="padding:4px 12px;border-radius:6px;border:1px solid var(--border-primary);background:var(--bg-input);color:var(--text-primary);cursor:pointer;font-size:12px">重置视角</button>
+          <button onclick="toggleCrystalAutoRotate()" id="btnAutoRotate" style="padding:4px 12px;border-radius:6px;border:1px solid var(--border-primary);background:var(--bg-input);color:var(--text-primary);cursor:pointer;font-size:12px">自动旋转：开</button>
+        </div>
+      </div>
+    </section>
 
-    <!-- 3D 晶体结构 -->
-    <div id="crystal3Dbody" class="content-card hidden">
-      <h3>💎 3D 晶体结构</h3>
-      <div id="crystal3DContainer" style="width:100%;height:400px;background:#0a0a1a;border-radius:8px;position:relative;overflow:hidden">
-        <canvas id="crystalCanvas" style="width:100%;height:100%"></canvas>
-        <div id="crystalInfo" style="position:absolute;top:8px;left:12px;font-size:12px;color:rgba(255,255,255,.7);background:rgba(0,0,0,.5);padding:4px 10px;border-radius:6px"></div>
-        <div id="crystalLlegend" style="position:absolute;bottom:8px;left:12px;font-size:11px;color:rgba(255,255,255,.6)"></div>
-      </div>
-      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-        <button onclick="resetCrystalView()" style="padding:4px 12px;border-radius:6px;border:1px solid var(--border-primary);background:var(--bg-input);color:var(--text-primary);cursor:pointer;font-size:12px">重置视角</button>
-        <button onclick="toggleCrystalAutoRotate()" id="btnAutoRotate" style="padding:4px 12px;border-radius:6px;border:1px solid var(--border-primary);background:var(--bg-input);color:var(--text-primary);cursor:pointer;font-size:12px">自动旋转：开</button>
-      </div>
-    </div>
+    <!-- 核心数据 -->
+    <section id="section-core" class="dimension-section" data-dimension="core">
+      <h2 class="section-title">📊 核心数据</h2>
+      <div class="section-grid" id="coreGrid"></div>
+    </section>
 
-    <!-- 同位素详细表 -->
-    <div id="isotopeCard" class="content-card">
-      <h3>🔬 同位素数据</h3>
-      <div id="isotopeTableWrap" style="overflow-x:auto">
-        <p style="color:var(--text-muted)">加载中…</p>
-      </div>
-    </div>
+    <!-- 安全与工业 -->
+    <section id="section-safety" class="dimension-section" data-dimension="safety">
+      <h2 class="section-title">⚠️ 安全与工业</h2>
+      <div class="section-grid" id="safetyGrid"></div>
+    </section>
 
-    <!-- Markdown 内容 -->
-    <div class="content-card">
-      <div id="mdContent" class="md-content">
-        <p style="color:var(--text-muted);text-align:center;padding:32px">加载元素详情中…</p>
+    <!-- 科研数据 -->
+    <section id="section-research" class="dimension-section" data-dimension="research">
+      <h2 class="section-title">🔬 科研数据</h2>
+      <div class="section-grid" id="researchGrid"></div>
+    </section>
+
+    <!-- 同位素与标识符 -->
+    <section id="section-isotope" class="dimension-section" data-dimension="isotope">
+      <h2 class="section-title">⚛️ 同位素与标识符</h2>
+      <div id="isotopeGrid"></div>
+    </section>
+
+    <!-- 行业与交叉学科数据（P6/P7） -->
+    <section id="section-p6p7" class="dimension-section" data-dimension="p6p7">
+      <h2 class="section-title">🌐 行业与交叉学科数据</h2>
+      <div class="section-grid" id="p6p7Grid"></div>
+    </section>
+
+    <!-- 综合详情（Markdown） -->
+    <section id="section-detail" class="dimension-section" data-dimension="detail">
+      <h2 class="section-title">📖 综合详情</h2>
+      <div class="content-card">
+        <div id="mdContent" class="md-content">
+          <p style="color:var(--text-muted);text-align:center;padding:32px">加载元素详情中…</p>
+        </div>
       </div>
-    </div>
+    </section>
 
   </main>
 </div>
@@ -603,6 +619,128 @@ async function init() {
 
   /* ── 异步加载详情 Markdown（优先 details/{symbol}.md） ── */
   loadMarkdownAsync(el);
+
+  /* ── 重新组织为「左侧导航 + 右侧维度内容」布局 ── */
+  organizeDimensionLayout(el);
+}
+
+/* ════════════════════════════════════════════════════
+   左侧导航 + 右侧维度内容 布局组织器
+   将 legacySidebarSource 中渲染好的卡片搬运到对应 section
+   ════════════════════════════════════════════════════ */
+function organizeDimensionLayout(el) {
+  var source = document.getElementById('legacySidebarSource');
+  if (!source) return;
+
+  // 搬运核心数据
+  moveCards(source, 'core', document.getElementById('coreGrid'));
+  // 搬运安全与工业
+  moveCards(source, 'safety', document.getElementById('safetyGrid'));
+  // 搬运科研数据
+  moveCards(source, 'research', document.getElementById('researchGrid'));
+  // 搬运同位素与标识符
+  moveCards(source, 'isotope', document.getElementById('isotopeGrid'));
+
+  // 同位素详细表也并入同位素 section
+  var isoTable = document.getElementById('isotopeCard');
+  var isoGrid = document.getElementById('isotopeGrid');
+  if (isoTable && isoGrid && isoTable.parentNode) {
+    isoTable.classList.add('props-card');
+    isoGrid.appendChild(isoTable);
+  }
+
+  // 移除遗留空分组
+  source.style.display = 'none';
+
+  // 触发角色视图重新应用（让 P6/P7 卡片先渲染到 #p6p7Grid）
+  if (typeof RoleViewer !== 'undefined' && RoleViewer.refresh) {
+    RoleViewer.refresh();
+  }
+
+  // 生成分类导航（此时各 section 内容已就位）
+  buildDimensionNav();
+
+  // 初始化滚动高亮
+  initDimensionNavScrollSpy();
+}
+
+function moveCards(source, groupName, targetGrid) {
+  if (!source || !targetGrid) return;
+  var group = source.querySelector('.sidebar-group[data-group="' + groupName + '"]');
+  if (!group) return;
+  var cards = group.querySelectorAll('.props-card, .electron-vis');
+  cards.forEach(function(card) {
+    // 保持 display 状态（有些卡片默认隐藏）
+    targetGrid.appendChild(card);
+  });
+}
+
+function buildDimensionNav() {
+  var navList = document.getElementById('dimensionNavList');
+  if (!navList) return;
+  navList.innerHTML = '';
+
+  var dims = [
+    { id: 'section-search', label: '🔍 搜索', count: false },
+    { id: 'section-core', label: '📊 核心数据', count: true },
+    { id: 'section-safety', label: '⚠️ 安全与工业', count: true },
+    { id: 'section-research', label: '🔬 科研数据', count: true },
+    { id: 'section-isotope', label: '⚛️ 同位素与标识符', count: true },
+    { id: 'section-p6p7', label: '🌐 行业与交叉学科', count: true },
+    { id: 'section-detail', label: '📖 综合详情', count: false }
+  ];
+
+  dims.forEach(function(dim) {
+    var section = document.getElementById(dim.id);
+    if (!section) return;
+
+    var li = document.createElement('li');
+    li.className = 'dimension-nav-item';
+
+    var a = document.createElement('a');
+    a.className = 'dimension-nav-link';
+    a.href = '#' + dim.id;
+    a.setAttribute('data-target', dim.id);
+    a.innerHTML = '<span>' + dim.label + '</span>';
+
+    if (dim.count) {
+      var count = section.querySelectorAll('.props-card, .electron-vis').length;
+      if (count > 0) {
+        a.innerHTML += '<span class="dimension-nav-count">' + count + '</span>';
+      }
+    }
+
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      history.replaceState(null, null, '#' + dim.id);
+    });
+
+    li.appendChild(a);
+    navList.appendChild(li);
+  });
+}
+
+function initDimensionNavScrollSpy() {
+  var sections = document.querySelectorAll('.dimension-section');
+  var navLinks = document.querySelectorAll('.dimension-nav-link');
+  if (!sections.length || !navLinks.length) return;
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        navLinks.forEach(function(link) {
+          link.classList.toggle('active', link.getAttribute('data-target') === entry.target.id);
+        });
+      }
+    });
+  }, {
+    root: null,
+    rootMargin: '-80px 0px -60% 0px',
+    threshold: 0
+  });
+
+  sections.forEach(function(section) { observer.observe(section); });
 }
 
 /* ── HTML 转义（防止 XSS） ── */

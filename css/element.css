@@ -429,3 +429,196 @@
   .cpd-app-item { padding: 6px 9px !important; }
   .cpd-mech-item { font-size: 11.2px !important; padding: 5px 8px !important; }
 }
+
+/* ========================================
+   左侧导航 + 右侧维度内容 布局（P3+）
+   ======================================== */
+
+/* 侧边栏 sticky 固定 */
+.detail-sidebar {
+  position: sticky;
+  top: 76px;
+  align-self: flex-start;
+  max-height: calc(100vh - 92px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.detail-sidebar::-webkit-scrollbar { width: 5px; }
+.detail-sidebar::-webkit-scrollbar-thumb {
+  background: var(--border); border-radius: 3px;
+}
+
+/* 维度导航 */
+.dimension-nav {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 16px;
+}
+.dimension-nav-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 10px;
+}
+.dimension-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.dimension-nav-item {
+  margin-bottom: 3px;
+}
+.dimension-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 12.5px;
+  transition: all .15s ease;
+  cursor: pointer;
+}
+.dimension-nav-link:hover {
+  background: rgba(88,166,255,.08);
+  color: var(--accent-blue);
+}
+.dimension-nav-link.active {
+  background: rgba(88,166,255,.14);
+  color: var(--accent-blue);
+  font-weight: 600;
+}
+.dimension-nav-link.hidden-dim {
+  display: none;
+}
+.dimension-nav-count {
+  margin-left: auto;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: var(--bg-hover);
+  color: var(--text-muted);
+}
+.dimension-nav-link.active .dimension-nav-count {
+  background: rgba(88,166,255,.2);
+  color: var(--accent-blue);
+}
+
+/* 主内容区 section */
+.dimension-section {
+  scroll-margin-top: 76px;
+  margin-bottom: 24px;
+}
+.dimension-section.hidden {
+  display: none !important;
+}
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 14px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+.section-grid .props-card {
+  margin-bottom: 0;
+}
+.section-grid .props-inline {
+  border-radius: var(--radius) !important;
+}
+.section-grid .props-inline .props-card-title {
+  font-size: 12px !important;
+  padding: 10px 14px !important;
+  text-transform: none !important;
+}
+.section-grid .props-inline #propsBody,
+.section-grid .props-inline #physPropsBody,
+.section-grid .props-inline #crystalPropsBody,
+.section-grid .props-inline #materialPropsBody,
+.section-grid .props-inline #thermoPropsBody,
+.section-grid .props-inline #electroPropsBody,
+.section-grid .props-inline #ghsBody,
+.section-grid .props-inline #toxicBody,
+.section-grid .props-inline #industrialBody,
+.section-grid .props-inline #emergencyBody,
+.section-grid .props-inline #spectralBody,
+.section-grid .props-inline #advCrystalBody,
+.section-grid .props-inline #researchBody,
+.section-grid .props-inline #isotopeSummary,
+.section-grid .props-inline #idPropsBody,
+.section-grid .props-inline #sourcesBody,
+.section-grid .props-inline #compoundsBody,
+.section-grid .props-inline #trendBody,
+.section-grid .props-inline #abundanceBody,
+.section-grid .props-inline #relationsBody {
+  font-size: 13px !important;
+  padding: 10px 14px !important;
+  line-height: 1.6 !important;
+}
+
+/* 同位素 section 单独样式 */
+#isotopeGrid .props-card {
+  margin-bottom: 16px;
+}
+#isotopeGrid .isotope-table {
+  margin-top: 8px;
+}
+
+/* P6/P7 角色卡片在主内容区 */
+#p6p7Grid .role-extra-card {
+  margin-bottom: 0;
+}
+
+/* 角色视图在侧边栏的样式微调 */
+#roleSwitcher {
+  margin-bottom: 14px;
+}
+
+/* 隐藏 section 时不要让内部空 card 占位 */
+.dimension-section.hidden .content-card,
+.dimension-section.hidden .section-grid,
+.dimension-section.hidden .section-title {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .detail-sidebar {
+    position: relative;
+    top: auto;
+    max-height: none;
+  }
+  .dimension-nav {
+    padding: 12px;
+  }
+  .dimension-nav-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+  }
+  .section-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .dimension-nav-list {
+    grid-template-columns: 1fr;
+  }
+  .section-title {
+    font-size: 16px;
+  }
+}

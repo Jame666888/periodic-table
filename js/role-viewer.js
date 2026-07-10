@@ -289,24 +289,12 @@
     desc.textContent = getRoleById(savedRole).desc;
     container.appendChild(desc);
 
-    // Insert after hero card / nav buttons, before first sidebar group
-    var firstGroup = sidebar.querySelector('.sidebar-group');
-    if (firstGroup) {
-      sidebar.insertBefore(container, firstGroup);
+    // Insert before dimension navigation
+    var dimNav = sidebar.querySelector('.dimension-nav');
+    if (dimNav) {
+      sidebar.insertBefore(container, dimNav);
     } else {
       sidebar.appendChild(container);
-    }
-
-    // Extra data container (for role-specific P6/P7 cards)
-    var extraContainer = document.createElement('div');
-    extraContainer.id = 'roleExtraContainer';
-    extraContainer.className = 'role-extra-container';
-    // Insert before the TOC or at end of sidebar
-    var toc = sidebar.querySelector('.toc-card');
-    if (toc) {
-      sidebar.insertBefore(extraContainer, toc);
-    } else {
-      sidebar.appendChild(extraContainer);
     }
   }
 
@@ -339,80 +327,88 @@
 
     var role = currentRole;
 
-    // Show/hide sidebar groups
-    var groups = document.querySelectorAll('.sidebar-group');
-    groups.forEach(function(group) {
-      var groupName = group.getAttribute('data-group');
-      var shouldShow = role.groups.indexOf(groupName) !== -1;
-      var shouldExpand = role.expandGroups && role.expandGroups.indexOf(groupName) !== -1;
+    // Map old group names to new section ids
+    var groupToSection = {
+      'core': 'section-core',
+      'safety': 'section-safety',
+      'research': 'section-research',
+      'isotope': 'section-isotope'
+    };
 
-      if (shouldShow) {
-        group.style.display = '';
-        // If this group should be expanded, expand it
-        if (shouldExpand && group.classList.contains('collapsed')) {
-          toggleSidebarGroup(groupName);
-        }
+    // Always visible base sections
+    var visibleSections = ['section-search'];
+
+    if (role.id === 'all') {
+      visibleSections = ['section-search', 'section-core', 'section-safety', 'section-research', 'section-isotope', 'section-p6p7', 'section-detail'];
+    } else {
+      role.groups.forEach(function(g) {
+        var sid = groupToSection[g];
+        if (sid && visibleSections.indexOf(sid) === -1) visibleSections.push(sid);
+      });
+      // Detail/Markdown is useful for most roles except pure compliance
+      if (role.id !== 'lawyer') {
+        visibleSections.push('section-detail');
+      }
+      // P6/P7 cross-disciplinary section is rendered by extra cards
+      visibleSections.push('section-p6p7');
+    }
+
+    // Show/hide main sections
+    var sections = document.querySelectorAll('.dimension-section');
+    sections.forEach(function(section) {
+      var sid = section.id;
+      if (visibleSections.indexOf(sid) !== -1) {
+        section.classList.remove('hidden');
       } else {
-        // For 'all' role, show everything; for specific roles, hide non-relevant
-        if (role.id !== 'all') {
-          group.style.display = 'none';
-        } else {
-          group.style.display = '';
-        }
+        section.classList.add('hidden');
       }
     });
 
-    // Show/hide individual cards within visible groups
-    if (role.id !== 'all') {
-      // Hide all cards first
-      var allCards = document.querySelectorAll('.props-card');
-      allCards.forEach(function(card) {
-        if (card.id) {
-          var shouldShow = role.cards.indexOf(card.id) !== -1;
-          card.style.display = shouldShow ? '' : 'none';
-        }
-      });
-    } else {
-      // Show all cards
-      var allCards = document.querySelectorAll('.props-card');
-      allCards.forEach(function(card) {
-        card.style.display = '';
-      });
-    }
-
-    // Render extra role-specific data
+    // Render extra role-specific data (P6/P7 cards)
     renderExtraData();
+
+    // Update dimension nav visibility
+    updateDimensionNav();
+  }
+
+  function updateDimensionNav() {
+    var links = document.querySelectorAll('.dimension-nav-link');
+    links.forEach(function(link) {
+      var target = document.getElementById(link.getAttribute('data-target'));
+      if (!target) return;
+      link.classList.toggle('hidden-dim', target.classList.contains('hidden'));
+    });
   }
 
   function renderExtraData() {
-    var container = document.getElementById('roleExtraContainer');
+    var container = document.getElementById('p6p7Grid');
     if (!container) return;
     container.innerHTML = '';
-
-    if (!currentRole || currentRole.id === 'all') {
-      // For 'all' role, show all extra dimensions
-      var el = getCurrentElement();
-      if (!el) return;
-      ROLES[0].extra.forEach(function(key) {
-        var renderer = EXTRA_RENDERERS[key];
-        if (renderer) {
-          var html = renderer(el);
-          if (html) container.insertAdjacentHTML('beforeend', html);
-        }
-      });
-      return;
-    }
 
     var el = getCurrentElement();
     if (!el) return;
 
-    currentRole.extra.forEach(function(key) {
+    var keys = [];
+    if (!currentRole || currentRole.id === 'all') {
+      keys = ROLES[0].extra;
+    } else {
+      keys = currentRole.extra;
+    }
+
+    keys.forEach(function(key) {
       var renderer = EXTRA_RENDERERS[key];
       if (renderer) {
         var html = renderer(el);
         if (html) container.insertAdjacentHTML('beforeend', html);
       }
     });
+
+    // Hide P6/P7 section if no cards rendered
+    var section = document.getElementById('section-p6p7');
+    if (section) {
+      var hasCards = container.querySelectorAll('.props-card').length > 0;
+      section.classList.toggle('hidden', !hasCards);
+    }
   }
 
   function getCurrentElement() {
