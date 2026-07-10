@@ -1,7 +1,9 @@
 # ⚛️ Interactive Periodic Table of Elements
 
 > 交互式化学元素周期表 — 118种元素完整数据 · 3D可视化 · 中英双语 · PWA离线可用 · 知识测验
+
 🌐 **[在线演示 / Live Demo](https://jame666888.github.io/periodic-table/)** · 📦 **[源代码 / Source Code](https://github.com/Jame666888/periodic-table)**
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Elements: 118](https://img.shields.io/badge/Elements-118-blue.svg)]()
 [![PWA](https://img.shields.io/badge/PWA-Ready-purple.svg)]()
