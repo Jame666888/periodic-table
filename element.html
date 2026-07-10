@@ -199,6 +199,13 @@ if ('serviceWorker' in navigator) {
     <section id="section-isotope" class="dimension-section" data-dimension="isotope">
       <h2 class="section-title">⚛️ 同位素与标识符</h2>
       <div id="isotopeGrid"></div>
+      <!-- 同位素详细表容器（保持原 ID，供 buildIsotopeSection 填充） -->
+      <div id="isotopeCard" class="content-card" style="margin-top:16px">
+        <h3>🔬 同位素数据</h3>
+        <div id="isotopeTableWrap" style="overflow-x:auto">
+          <p style="color:var(--text-muted)">加载中…</p>
+        </div>
+      </div>
     </section>
 
     <!-- 行业与交叉学科数据（P6/P7） -->
@@ -338,19 +345,7 @@ function renderMarkdown(mdRaw) {
       mdRaw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</pre>';
   }
 
-  // 更新目录
-  var headings = document.querySelectorAll('#mdContent h2, #mdContent h3');
-  var tocList = document.getElementById('tocList');
-  tocList.innerHTML = '';
-  headings.forEach(function(h, i) {
-    var id = 'section-' + i;
-    h.id = id;
-    var li = document.createElement('li');
-    li.className = 'toc-item';
-    li.style.paddingLeft = h.tagName === 'H3' ? '12px' : '0';
-    li.innerHTML = '<a class="toc-link" href="#' + id + '">' + h.textContent.trim() + '</a>';
-    tocList.appendChild(li);
-  });
+  // 旧版 sidebar 目录已移除，由 buildDimensionNav() 提供维度级导航
 
   // KaTeX 渲染
   try {
@@ -584,19 +579,7 @@ async function init() {
       mdRaw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</pre>';
   }
 
-  /* ── 目录 ── */
-  var headings = document.querySelectorAll('#mdContent h2, #mdContent h3');
-  var tocList = document.getElementById('tocList');
-  tocList.innerHTML = '';
-  headings.forEach(function(h, i) {
-    var id = 'section-' + i;
-    h.id = id;
-    var li = document.createElement('li');
-    li.className = 'toc-item';
-    li.style.paddingLeft = h.tagName === 'H3' ? '12px' : '0';
-    li.innerHTML = '<a class="toc-link" href="#' + id + '">' + h.textContent.replace(/^[🔬⚗️🧪🏭⚠️🔮]/u,'').trim() + '</a>';
-    tocList.appendChild(li);
-  });
+  /* ── 旧版 sidebar 目录已移除，由 buildDimensionNav() 提供维度级导航 ── */
 
   /* ── KaTeX 渲染数学公式 ── */
   try {
@@ -640,14 +623,6 @@ function organizeDimensionLayout(el) {
   moveCards(source, 'research', document.getElementById('researchGrid'));
   // 搬运同位素与标识符
   moveCards(source, 'isotope', document.getElementById('isotopeGrid'));
-
-  // 同位素详细表也并入同位素 section
-  var isoTable = document.getElementById('isotopeCard');
-  var isoGrid = document.getElementById('isotopeGrid');
-  if (isoTable && isoGrid && isoTable.parentNode) {
-    isoTable.classList.add('props-card');
-    isoGrid.appendChild(isoTable);
-  }
 
   // 移除遗留空分组
   source.style.display = 'none';
