@@ -1,6 +1,6 @@
-// Service Worker for PWA - v5.0
+// Service Worker for PWA - v6.0
 // 版本号 - 每次更新时递增
-const CACHE_NAME = 'periodic-table-v5.0';
+const CACHE_NAME = 'periodic-table-v6.0';
 
 // 核心文件（必须全部缓存成功，否则 install 失败）
 const CORE_URLS = [
@@ -26,6 +26,10 @@ const DATA_URLS = [
   './data/p4-crystal.js',
   './data/p4-research.js',
   './data/p4-spectral.js',
+  './data/p6-legal.js',
+  './data/p6-engineering.js',
+  './data/p6-education.js',
+  './data/p6-economy.js',
 ];
 
 // JS 功能模块

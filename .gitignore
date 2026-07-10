@@ -30,3 +30,7 @@ build/
 # Environment
 .env
 .env.local
+
+# Python cache
+__pycache__/
+*.pyc
