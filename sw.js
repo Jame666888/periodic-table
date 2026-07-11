@@ -1,6 +1,6 @@
-// Service Worker for PWA - v6.0
+// Service Worker for PWA - v6.1
 // 版本号 - 每次更新时递增
-const CACHE_NAME = 'periodic-table-v6.0';
+const CACHE_NAME = 'periodic-table-v6.1';
 
 // 核心文件（必须全部缓存成功，否则 install 失败）
 const CORE_URLS = [

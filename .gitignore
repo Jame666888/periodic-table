@@ -38,3 +38,6 @@ __pycache__/
 # Local organized material archive (copy of project files, not source)
 project-materials/
 preview-element-nav*.png
+
+# Playwright CLI debug session data
+.playwright-cli/
