@@ -46,8 +46,8 @@ if ('serviceWorker' in navigator) {
     <div id="searchDropdown" class="search-dropdown hidden"></div>
   </div>
   <button id="langSwitchBtn" class="nav-lang-btn"></button>
-  <script src="js/i18n.js"></script>
-  <script src="js/data-completer.js"></script>
+  <script defer src="js/i18n.js"></script>
+  <script defer src="js/data-completer.js"></script>
 </nav>
 
 <!-- 主体 -->
@@ -233,45 +233,35 @@ if ('serviceWorker' in navigator) {
 </footer>
 
 <!-- 脚本 -->
-<script src="data/elements.js"></script>
-<script src="data/p3-safety.js"></script>
-<script src="data/p4-spectral.js"></script>
-<script src="data/p4-crystal.js"></script>
-<script src="data/p4-research.js"></script>
-<script src="data/abundance-data.js"></script>
-  <script src="data/element-details.js"></script>
-  <script src="js/element-details-enhanced.js"></script>
-  <script src="js/element-details-enhanced-v3.js"></script>
-  <script src="js/element-details-v4-patch.js"></script>
-  <script src="js/element-details-v5-patch.js"></script>
-  <script src="js/element-details-v6-patch.js"></script>
-  <script src="js/crystal-structure-svg.js"></script>
-  <script src="js/application-diagrams.js"></script>
-  <script src="js/application-diagrams-v2.js"></script>
-  <script src="js/equation-balancing-enhanced.js"></script>
-  <script src="js/equation-balancing-50.js"></script>
-  <script src="js/data-validation-enhanced.js"></script>
-<script src="data/compounds.js"></script>
-<script src="data/crystal-structures.js"></script>
-<!-- P6 多角色维度数据 -->
-<script src="data/p6-legal.js"></script>
-<script src="data/p6-engineering.js"></script>
-<script src="data/p6-education.js"></script>
-<script src="data/p6-economy.js"></script>
-<!-- P7 深度交叉维度数据 -->
-<script src="data/p7-environment.js"></script>
-<script src="data/p7-biomedical.js"></script>
-<script src="data/p7-strategy.js"></script>
-<script src="data/p7-history.js"></script>
-<script src="data/p7-fun.js"></script>
-<script src="js/search.js"></script>
-<script src="js/p3-render.js"></script>
-<script src="js/p4-renderer.js"></script>
-<script src="js/p5-orbital.js"></script>
-<script src="js/p5-trends.js"></script>
-<script src="js/p5-abundance.js"></script>
-<script src="js/p5-relations.js"></script>
-<script src="js/role-viewer.js"></script>
+<script defer src="data/elements.js"></script>
+<script defer src="data/p3-safety.js"></script>
+<script defer src="data/p4-spectral.js"></script>
+<script defer src="data/p4-crystal.js"></script>
+<script defer src="data/p4-research.js"></script>
+<script defer src="data/abundance-data.js"></script>
+  <script defer src="data/element-details.js"></script>
+  <script defer src="js/element-details-enhanced.js"></script>
+  <script defer src="js/element-details-enhanced-v3.js"></script>
+  <script defer src="js/element-details-v4-patch.js"></script>
+  <script defer src="js/element-details-v5-patch.js"></script>
+  <script defer src="js/element-details-v6-patch.js"></script>
+  <script defer src="js/crystal-structure-svg.js"></script>
+  <script defer src="js/application-diagrams.js"></script>
+  <script defer src="js/equation-balancing-enhanced.js"></script>
+  <script defer src="js/equation-balancing-50.js"></script>
+  <script defer src="js/data-validation-enhanced.js"></script>
+<script defer src="data/compounds.js"></script>
+<script defer src="data/crystal-structures.js"></script>
+<!-- P6/P7 维度数据已改为按需懒加载（见 js/p6p7-loader.js，首屏不再同步加载约 1.85MB） -->
+<script defer src="js/search.js"></script>
+<script defer src="js/p3-render.js"></script>
+<script defer src="js/p4-renderer.js"></script>
+<script defer src="js/p5-orbital.js"></script>
+<script defer src="js/p5-trends.js"></script>
+<script defer src="js/p5-abundance.js"></script>
+<script defer src="js/p5-relations.js"></script>
+<script defer src="js/role-viewer.js"></script>
+<script defer src="js/p6p7-loader.js"></script>
 <!-- Three.js 已在 head 中加载 -->
 <script>
 /* ═══ 全局错误捕获（帮助诊断运行时问题） ═══ */
@@ -605,6 +595,11 @@ async function init() {
 
   /* ── 重新组织为「左侧导航 + 右侧维度内容」布局 ── */
   organizeDimensionLayout(el);
+
+  /* ── 按需懒加载 P6/P7 维度数据（非阻塞，后台填充右侧维度区） ── */
+  if (typeof window.P6P7Loader !== 'undefined') {
+    window.P6P7Loader.load();
+  }
 }
 
 /* ════════════════════════════════════════════════════

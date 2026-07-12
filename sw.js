@@ -1,6 +1,6 @@
 // Service Worker for PWA - v6.1
 // 版本号 - 每次更新时递增
-const CACHE_NAME = 'periodic-table-v6.1';
+const CACHE_NAME = 'periodic-table-v6.2';
 
 // 核心文件（必须全部缓存成功，否则 install 失败）
 const CORE_URLS = [
@@ -48,14 +48,12 @@ const JS_URLS = [
   './js/data-validation-enhanced.js',
   './js/element-details-enhanced.js',
   './js/element-details-enhanced-v3.js',
-  './js/element-details-enhanced-v4.js',
   './js/element-details-v4-patch.js',
   './js/element-details-v5-patch.js',
   './js/element-details-v6-patch.js',
   './js/crystal-structure-svg.js',
   './js/3d-viewer.js',
   './js/application-diagrams.js',
-  './js/application-diagrams-v2.js',
   './js/equation-balancing.js',
   './js/equation-balancing-enhanced.js',
   './js/equation-balancing-50.js',
